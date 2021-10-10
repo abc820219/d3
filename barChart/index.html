@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        #container {
+            background-color: #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.1.1/d3.min.js"
+    integrity="sha512-COTaPOlz12cG4fSfcBsxZsjauBAyldqp+8FQUM/dZHm+ts/jR4AFoJhCqxy8K10Jrf3pojfsbq7fAPTb1XaVkg=="
+    crossorigin="anonymous"></script>
+<script>
+    let data = [1, 3, 7, 2, 9, 13, 5, 8, 2, 9],
+        bar_h = 50, bar_p = 10,
+        svg_height = (bar_h + bar_p) * data.length,
+        svg_width = 500;
+    // 比例尺
+    let scale = d3.scaleLinear()
+        .domain([0, d3.max(data)])
+        .range([0, svg_width]);
+
+    // 初始化
+    let svg = d3.select("#container").append('svg').attr('width', svg_width).attr('height', svg_height)
+    // 選擇所有g -> enter新增多的數據/update更新原本的/原本元素比較多的話可以選擇exit
+    let bar = svg.selectAll('g').data(data).enter().append('g').attr('transform', function (d, i) {
+        return `translate(0,${i * (bar_h + bar_p)})`
+    })
+    // 畫數據
+    bar.append("rect")
+        .attr('width', (d) => scale(d))
+        .attr('height', bar_h)
+        .style('fill', 'red')
+    // 寫資料
+    bar.append('text').text((d) => d)
+        .attr("x", (d) => scale(d))
+        .attr('y', () => bar_h / 2)
+        .attr('text-anchor', 'end')
+</script>
+
+</html>
