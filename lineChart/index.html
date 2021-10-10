@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #container {
+        background-color: #ddd;
+        width: 500px;
+        height: 250px;
+      }
+
+      path {
+        fill: none;
+        stroke: red;
+        stroke-width: 2;
+      }
+
+      .domain,
+      .tick line {
+        stroke: #ccc;
+        stroke-width: 3;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+  </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.1.1/d3.min.js"
+    integrity="sha512-COTaPOlz12cG4fSfcBsxZsjauBAyldqp+8FQUM/dZHm+ts/jR4AFoJhCqxy8K10Jrf3pojfsbq7fAPTb1XaVkg=="
+    crossorigin="anonymous"
+  ></script>
+  <script>
+    //   選擇容器
+    //   添加svg
+    //   添加長寬屬性
+    //   svg裡面添加g
+    //   設定偏移量屬性
+    //   g裡面添加path
+    //   d屬性裡面畫線
+    //   設定svg path的線段
+    //   select選擇第一個
+    //   selectAll選擇全部
+    let width = 500,
+      height = 250,
+      margin = { left: 50, top: 30, right: 20, bottom: 20 },
+      g_width = width - margin.left - margin.right,
+      g_height = height - margin.top - margin.bottom;
+    let data = [1, 3, 5, 7, 8, 4, 3, 7];
+    // X寬度最大與最小比例
+    let scale_x = d3
+      .scaleLinear()
+      .domain([0, data.length - 1])
+      .range([0, g_width]);
+    // Y寬度最大與最小比例
+    let scale_y = d3
+      .scaleLinear()
+      .domain([0, d3.max(data)])
+      .range([g_height, 0]);
+    // 線段與比例結合
+    let line = d3
+      .line()
+      .x((d, i) => scale_x(i)) //X位置
+      .y((d) => scale_y(d)) //Y位置
+      .curve(d3.curveCardinal); //曲線樣式
+    let svg = d3
+      .select("#container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height);
+
+    svg.append("g");
+    let g = d3.select("g");
+    g.attr("transform", "translate(50,30)"); //設置起點
+    // d3.selectAll("g") //畫兩條線
+    g.append("path").attr("d", line(data)); //數據與線段算法結合
+
+    let x_axis = d3.axisBottom().scale(scale_x);
+    let y_axis = d3.axisLeft().scale(scale_y);
+
+    g.append("g").call(x_axis).attr("transform", `translate(0,${g_height})`);
+    g.append("g").call(y_axis);
+    g.append("text")
+      .text("price")
+      .attr("transform", "rotate(-90)")
+      .attr("text-anchor", "end")
+      .attr("dy", "1em");
+  </script>
+</html>
